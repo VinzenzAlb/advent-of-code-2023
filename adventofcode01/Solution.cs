@@ -6,21 +6,21 @@ namespace adventofcode2023
         public string SolutionOfFirstPart(string[] lines)
         {
             int sum = 0;
-            char first = '0';
-            char second = '0';
+            char first = 'f';
+            char second = 'f';
             foreach (string line in lines)
             {
                 foreach (char c in line)
                 {
                     if (char.IsDigit(c))
                     {
-                        if (first == '0')
+                        if (first == 'f')
                             first = c;
                         second = c;
                     }
                 }
                 sum += int.Parse(first.ToString() + second.ToString());
-                first = '0';
+                first = 'f';
             }
 
 
@@ -30,23 +30,23 @@ namespace adventofcode2023
         public string SolutionOfSecondPart(string[] lines)
         {
             int sum = 0;
-            char first = '0';
-            char second = '0';
+            char first = 'f';
+            char second = 'f';
             string current = "";
             foreach (string line in lines)
             {
                 foreach (char c in line)
                 {
                     current += c;
-                    if (StringisDigit(current, out char digit))
+                    if (StringIsDigit(current, out char digit))
                     {
-                        if (first == '0')
+                        if (first == 'f')
                             first = digit;
                         second = digit;
                     }
                 }
                 sum += int.Parse(first.ToString() + second.ToString());
-                first = '0';
+                first = 'f';
                 current = "";
             }
 
@@ -54,7 +54,7 @@ namespace adventofcode2023
             return sum.ToString();
         }
 
-        private bool StringisDigit(string current, out char digit)
+        private bool StringIsDigit(string current, out char digit)
         {
             if (current.Length < 1)
             {
@@ -96,7 +96,7 @@ namespace adventofcode2023
                     digit = '9';
                     return true;
                 default:
-                    bool tmp = StringisDigit(current.Substring(1), out char c);
+                    bool tmp = StringIsDigit(current.Substring(1), out char c);
                     digit = c;
                     return tmp;
             }
