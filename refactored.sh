@@ -11,7 +11,7 @@ folder_name="adventofcode${day_number}"
 git add $folder_name
 
 # Commit erstellen
-git commit -m "finished and working - day $day_number"
+git commit -m "finished and working - day $day_number - refactored"
 
 # Den Commit pushen
 git push
