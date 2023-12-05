@@ -67,19 +67,12 @@ namespace adventofcode2023
             for (long i = 0; i < long.MaxValue; i++)
             {
                 tmp = ReverseCalcWithMap(humidityToLocation, i);
-                if (tmp < 0) continue;
                 tmp = ReverseCalcWithMap(temperatureToHumidity, tmp);
-                if (tmp < 0) continue;
                 tmp = ReverseCalcWithMap(lightToTemperature, tmp);
-                if (tmp < 0) continue;
                 tmp = ReverseCalcWithMap(waterToLight, tmp);
-                if (tmp < 0) continue;
                 tmp = ReverseCalcWithMap(fertilizerToWater, tmp);
-                if (tmp < 0) continue;
                 tmp = ReverseCalcWithMap(soiLToFertilizer, tmp);
-                if (tmp < 0) continue;
                 tmp = ReverseCalcWithMap(seedToSoil, tmp);
-                if (tmp < 0) continue;
                 if (CheckSeedInRange(tmp, seedlist)) return i.ToString();
             }
 
