@@ -51,17 +51,8 @@ namespace adventofcode2023
 
         public string SolutionOfSecondPart(string[] lines)
         {
-            List<long> seeds = new();
-            List<long> locations = new();
-            string[] seedlist = lines[0].Split(":")[1].Split(" ");
+            long[] seedlist = ParseArrayStingToLong(lines[0].Split(":")[1].Split(" ").Skip(1).ToArray());
 
-            for (int i = 1; i < seedlist.Length - 1; i += 2)
-            {
-                for (long j = long.Parse(seedlist[i + 1]) - 1; j >= 0; j--)
-                {
-                    seeds.Add(long.Parse(seedlist[i]) + j);
-                }
-            }
             List<long[]> seedToSoil = GenerateMap("seed-to-soil map:", lines);
             List<long[]> soiLToFertilizer = GenerateMap("soil-to-fertilizer map:", lines);
             List<long[]> fertilizerToWater = GenerateMap("fertilizer-to-water map:", lines);
@@ -70,36 +61,50 @@ namespace adventofcode2023
             List<long[]> temperatureToHumidity = GenerateMap("temperature-to-humidity map:", lines);
             List<long[]> humidityToLocation = GenerateMap("humidity-to-location map:", lines);
 
-
-            long minLocation = long.MaxValue;
+            //long minLocation = long.MaxValue;
             long tmp;
-            /*
-            foreach (long seed in seeds)
-            {
-                tmp = CalcWithMap(seedToSoil, seed);
-                tmp = CalcWithMap(soiLToFertilizer, tmp);
-                tmp = CalcWithMap(fertilizerToWater, tmp);
-                tmp = CalcWithMap(waterToLight, tmp);
-                tmp = CalcWithMap(lightToTemperature, tmp);
-                tmp = CalcWithMap(temperatureToHumidity, tmp);
-                tmp = CalcWithMap(humidityToLocation, tmp);
-                if (tmp < minLocation) minLocation = tmp;
-            }
-            */
 
             for (long i = 0; i < long.MaxValue; i++)
             {
-                tmp = ReverseCalcWithMap(seedToSoil, i);
-                tmp = ReverseCalcWithMap(soiLToFertilizer, tmp);
-                tmp = ReverseCalcWithMap(fertilizerToWater, tmp);
-                tmp = ReverseCalcWithMap(waterToLight, tmp);
-                tmp = ReverseCalcWithMap(lightToTemperature, tmp);
+                tmp = ReverseCalcWithMap(humidityToLocation, i);
+                if (tmp < 0) continue;
                 tmp = ReverseCalcWithMap(temperatureToHumidity, tmp);
-                tmp = ReverseCalcWithMap(humidityToLocation, tmp);
-                if (seeds.Contains(tmp)) return i.ToString();
+                if (tmp < 0) continue;
+                tmp = ReverseCalcWithMap(lightToTemperature, tmp);
+                if (tmp < 0) continue;
+                tmp = ReverseCalcWithMap(waterToLight, tmp);
+                if (tmp < 0) continue;
+                tmp = ReverseCalcWithMap(fertilizerToWater, tmp);
+                if (tmp < 0) continue;
+                tmp = ReverseCalcWithMap(soiLToFertilizer, tmp);
+                if (tmp < 0) continue;
+                tmp = ReverseCalcWithMap(seedToSoil, tmp);
+                if (tmp < 0) continue;
+                if (CheckSeedInRange(tmp, seedlist)) return i.ToString();
             }
 
-            return minLocation.ToString();
+            return "something went wrong";
+        }
+
+        private long[] ParseArrayStingToLong(string[] strings)
+        {
+            long[] result = new long[strings.Length];
+            for (int i = 0; i < strings.Length; i++)
+            {
+                result[i] = long.Parse(strings[i]);
+            }
+            return result;
+        }
+
+        private bool CheckSeedInRange(long seed, long[] seedlist)
+        {
+
+            for (int i = 0; i < seedlist.Length - 1; i += 2)
+            {
+                if (seed >= seedlist[i] && seed < seedlist[i] + seedlist[i + 1])
+                    return true;
+            }
+            return false;
         }
 
         private long ReverseCalcWithMap(List<long[]> seedMap, long seed)
@@ -107,20 +112,11 @@ namespace adventofcode2023
             foreach (long[] rules in seedMap)
             {
                 if (seed >= rules[0] && seed < rules[0] + rules[2])
-                    return seed - rules[2] + rules[1];
+                    return seed - rules[0] + rules[1];
             }
             return seed;
         }
 
-        private long CalcWithMap(List<long[]> seedMap, long seed)
-        {
-            foreach (long[] rules in seedMap)
-            {
-                if (seed >= rules[1] && seed < rules[1] + rules[2])
-                    return seed - rules[1] + rules[0];
-            }
-            return seed;
-        }
 
         private List<long[]> GenerateMap(string startphrase, string[] lines)
         {
@@ -138,8 +134,6 @@ namespace adventofcode2023
                 result.Add(tmp);
                 lineCounter++;
             }
-
-
             return result;
         }
     }
